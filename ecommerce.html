@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NeoStore God Level</title>
+<title>NeoStore </title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -13,7 +13,7 @@ body.dark { --bg:#0f172a; }
 body.light { --bg:#f9fafb; --card:#ffffff; --primary:#6366f1; color:black;}
 body { background:var(--bg); transition:0.5s; overflow-x:hidden; }
 
-.card { transition:0.4s; }
+.card {  border-radius:16px; transition:0.4s; }
 .card:hover {
  transform:scale(1.05);
  box-shadow:0 20px 40px rgba(0,255,255,0.2);
@@ -115,24 +115,25 @@ NeoStore
 </h1>
 
 <div class="flex gap-2 items-center">
- <button class="px-4 py-2 bg-white/10 backdrop-blur rounded-lg text-white hover:bg-white/20 transition border border-white/10">
+ <button onclick="renderProducts()" class="px-4 py-2 bg-white/10 backdrop-blur rounded-lg text-white hover:bg-white/20 transition border border-white/10">
 Home
 </button>
 
 <button class="px-4 py-2 bg-white/10 backdrop-blur rounded-lg text-white hover:bg-white/20 transition border border-white/10">
 Deals
 </button>
+<button onclick="openOrderForm()" class="px-4 py-2 bg-white/10 backdrop-blur rounded-lg text-white hover:bg-white/20 transition border border-white/10"> Orders </button>
 
-<button class="px-4 py-2 bg-white/10 backdrop-blur rounded-lg text-white hover:bg-white/20 transition border border-white/10">
-Orders
-</button>
-
-<button class="px-4 py-2 bg-white/10 backdrop-blur rounded-lg text-white hover:bg-white/20 transition border border-white/10">
+<button onclick="showWishlist()"
+class="px-4 py-2 bg-white/10 backdrop-blur rounded-lg text-white hover:bg-white/20 transition border border-white/10">
 Wishlist
 </button>
-<input id="search" placeholder="Search for products..."
-class="px-5 py-2 rounded-full w-64 text-black focus:outline-none shadow-lg border border-gray-300">
+<div class="relative">
+  <input id="search" placeholder="Search products..."
+  class="pl-10 pr-4 py-2 rounded-full w-64 text-black focus:outline-none shadow-md border border-gray-300 focus:ring-2 focus:ring-cyan-400 transition">
 
+  <span class="absolute left-3 top-2.5 text-gray-500">🔍</span>
+</div>
 <select id="category"
 class="px-4 py-2 rounded-full text-black shadow-lg border border-gray-300">
 <option value="all">All</option>
@@ -162,20 +163,12 @@ class="px-4 py-2 rounded-full bg-gradient-to-r from-green-400 to-green-600 shado
 
 <section class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6" id="products"></section>
 
-<div id="cart" class="fixed right-0 top-0 w-80 h-full bg-gray-900 p-4 overflow-y-auto z-50 transition-all duration-500" style="transform:translateX(100%)">
+<div id="cart" onclick="event.stopPropagation()" class="fixed right-0 top-0 w-80 h-full bg-gray-900 p-4 overflow-y-auto z-50 transition-all duration-500" style="transform:translateX(100%)">
 <h2 class="text-xl mb-4">Cart</h2>
 <div id="cartItems"></div>
 <p id="total"></p>
 <section class="p-16 text-center bg-animate">
-<section class="relative p-16 text-center bg-animate overflow-hidden">
 
-<h2 class="text-6xl font-bold">Future Shopping</h2>
-<p class="mt-4">Real Products • Real Feel</p>
-
-<!-- 🔥 Bottom News Ticker -->
-
-
-</section>
 <div class="absolute bottom-0 left-0 w-full bg-black/40 py-2 overflow-hidden">
   <div class="whitespace-nowrap animate-marquee text-sm text-white">
     🔥 Big Sale Live Now &nbsp;&nbsp;&nbsp;
@@ -194,10 +187,29 @@ class="px-4 py-2 rounded-full bg-gradient-to-r from-green-400 to-green-600 shado
 
 <div id="checkoutModal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center">
 <div class="bg-gray-800 p-6 rounded text-center">
-<h2 class="mb-3">Scan QR to Pay</h2>
+<h2 class="mb-3">Scan and complete Payment</h2>
 <div id="qrcode"></div>
 <button onclick="paySuccess()" class="mt-4 bg-cyan-500 px-4 py-2 w-full">I Paid</button>
 </div>
+</div>
+<div id="orderModal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50">
+  <div class="bg-gray-800 p-6 rounded w-96 text-center">
+    <h2 class="text-xl mb-4">Order Details</h2>
+
+    <input id="custName" placeholder="Enter Name" class="w-full p-2 mb-2 text-black rounded">
+    <input id="custAddress" placeholder="Enter Address" class="w-full p-2 mb-2 text-black rounded">
+    <input id="custPhone" placeholder="Enter Phone" class="w-full p-2 mb-2 text-black rounded">
+
+    <button onclick="confirmOrder()" class="bg-green-500 px-4 py-2 w-full mt-3">Order Confirmed</button>
+  </div>
+</div>
+<div id="successModal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50">
+  <div class="bg-gray-800 p-6 rounded text-center">
+    <h2 class="text-2xl text-green-400 mb-4">🎉 Order Placed!</h2>
+    <p>Your order will arrive in few days.</p>
+    <p class="mt-2">Thank you for shopping ❤️</p>
+    <button onclick="closeSuccess()" class="mt-4 bg-cyan-500 px-4 py-2 w-full">OK</button>
+  </div>
 </div>
 <div id="productModal" class="zoom-in fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50">
 <div class="bg-gray-800 p-6 rounded w-80 text-center relative">
@@ -264,7 +276,6 @@ const baseProducts = [
 }
 ];
 
-// 👇 MAIN PRODUCTS ARRAY
 const products = [];
 
 for(let i = 1; i <= 60; i++){
@@ -284,12 +295,22 @@ for(let i = 1; i <= 60; i++){
 }
 let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 let cartData = JSON.parse(localStorage.getItem('cart')) || [];
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+function saveOrder(){
+  orders.push({
+    items: cartData,
+    date: new Date().toLocaleString()
+  });
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+}
 let currentProduct=null, modalQty=1;
 function updateCart(){
  localStorage.setItem('cart', JSON.stringify(cartData));
+
  renderCart();
 
- // cart count update
  let count = cartData.reduce((s,i)=>s+i.qty,0);
  document.getElementById('cartCount').innerText = count;
 }
@@ -297,11 +318,15 @@ function updateWishlistStorage(){
   localStorage.setItem("wishlist", JSON.stringify(wishlist));
 }
 function addToCart(id){
- let item=products.find(p=>p.id===id);
- let existing=cartData.find(p=>p.id===id);
+ let item = products.find(p=>p.id===id);
+ let existing = cartData.find(p=>p.id===id);
+
  if(existing) existing.qty++;
- else cartData.push({...item,qty:1});
+ else cartData.push({...item, qty:1});
+
  updateCart();
+
+ document.getElementById('cart').style.transform = "translateX(0)";
 }
 function buyNow(id){
  addToCart(id);
@@ -331,13 +356,14 @@ function renderCart(){
  let container=document.getElementById('cartItems');
  let totalBox=document.getElementById('total');
  container.innerHTML='';
- if(cartData.length===0){
- container.innerHTML = "<p class='text-center text-gray-400 mt-10'>Your cart is empty 🛒</p>";
- totalBox.innerText="";
- return;
-}
- let total=0;
 
+ let total = 0; 
+
+ if(cartData.length===0){
+  container.innerHTML = "<p class='text-center text-gray-400 mt-10'>Your cart is empty 🛒</p>";
+  totalBox.innerText="Total: $0";
+  return;
+}
  cartData.forEach((item,i)=>{
  total+=item.price*item.qty;
  container.innerHTML+=`
@@ -359,7 +385,7 @@ function renderCart(){
 function toggleCart(){
  let cart = document.getElementById('cart');
 
- if(cart.style.transform === "translateX(0px)" || cart.style.transform === "translateX(0%)"){
+ if(cart.style.transform === "translateX(0)"){
    cart.style.transform = "translateX(100%)";
  } else {
    cart.style.transform = "translateX(0)";
@@ -367,34 +393,31 @@ function toggleCart(){
 }
 document.addEventListener('click', (e)=>{
  let cart = document.getElementById('cart');
-let isCartBtn = e.target.closest("button") && e.target.innerText.includes("Cart");
- let isInsideCart = cart.contains(e.target);
+ let cartBtn = document.querySelector('[onclick="toggleCart()"]');
 
- // agar click cart ke bahar hai AND cart button nahi hai tabhi close karo
- if(!isInsideCart && !isCartBtn){
+
+ if (!cart.contains(e.target) && !cartBtn.contains(e.target)) {
    cart.style.transform = "translateX(100%)";
  }
 });
 function checkout(){
- let total=cartData.reduce((s,i)=>s+i.price*i.qty,0);
- if(total===0){alert("Cart empty");return;}
+ let total = cartData.reduce((s,i)=>s+i.price*i.qty,0);
 
- let checkoutModal=document.getElementById('checkoutModal');
- let qrcode=document.getElementById('qrcode');
+ if(cartData.length === 0){
+   alert("Cart is empty");
+   return;
+ }
+
+ let checkoutModal = document.getElementById('checkoutModal');
+ let qrcode = document.getElementById('qrcode');
 
  checkoutModal.classList.remove('hidden');
- qrcode.innerHTML='';
+ qrcode.innerHTML = '';
 
- new QRCode(qrcode,`upi://pay?pa=test@upi&pn=NeoStore&am=${total}`);
+ new QRCode(qrcode, `upi://pay?pa=test@upi&pn=NeoStore&am=${total}`);
 }
 
-function paySuccess(){
- alert("Payment Successful ");
- cartData=[];
- localStorage.removeItem('cart');
- renderCart();
- document.getElementById('checkoutModal').classList.add('hidden');
-}
+
 
 function renderProducts(){
  let search=document.getElementById('search').value.toLowerCase();
@@ -402,8 +425,17 @@ function renderProducts(){
  let container=document.getElementById('products');
  container.innerHTML='';
 
- products.filter(p=>(cat==='all'||p.cat===cat)&&p.name.toLowerCase().includes(search))
- .forEach(p=>{
+ let filtered = products.filter(p=>
+   (cat==='all'||p.cat===cat) &&
+   p.name.toLowerCase().includes(search)
+ );
+
+ if(filtered.length === 0){
+  container.innerHTML = "<p class='text-center col-span-4 text-gray-400'>No products found 😢</p>";
+  return;
+ }
+ 
+ filtered.forEach(p=>{
  container.innerHTML+=`
 <div onclick="openModal(${p.id})" class="card glass glow fade-up float p-4 rounded cursor-pointer relative">
 
@@ -453,7 +485,6 @@ ${wishlist.includes(p.id) ? "❤️" : "♡"}
  setTimeout(()=>document.querySelectorAll('.fade-up').forEach(el=>el.classList.add('show')),100);
 }
 renderProducts();
-renderCart();
 updateCart();
 function openModal(id){
  currentProduct=products.find(p=>p.id===id);
@@ -496,33 +527,77 @@ function toggleWishlist(id){
 
  updateWishlistStorage();
  renderProducts();
-}localStorage.setItem('cart', JSON.stringify(cartData));
-localStorage.setItem('wishlist', JSON.stringify(wishlist));
-function openModal(id){
- currentProduct=products.find(p=>p.id===id);
- modalQty=1;
-
- document.getElementById('modalImg').src=currentProduct.img;
- document.getElementById('modalName').innerText=currentProduct.name;
- document.getElementById('modalPrice').innerText='$'+currentProduct.price;
- document.getElementById('modalQty').innerText=1;
-
- document.getElementById('productModal').classList.remove('hidden');
- document.body.style.overflow = "hidden";
-}
-
-function closeModal(){
- document.getElementById('productModal').classList.add('hidden');
- document.body.style.overflow = "auto";
 }
 function showWishlist(){
  let container = document.getElementById('products');
  container.innerHTML = '';
 
- products
- .filter(p => wishlist.includes(p.id))
- .forEach(renderCardLogic);
+ let filtered = products.filter(p => wishlist.includes(p.id));
+
+ if(filtered.length === 0){
+  container.innerHTML = "<p class='text-center text-gray-400 col-span-4'>No wishlist items ❤️</p>";
+  return;
+ }
+
+ filtered.forEach(p=>{
+  container.innerHTML += `
+  <div class="card glass glow p-4 roundead">
+    <img src="${p.img}" class="h-40 w-full object-cover rounded">
+    <h3 class="mt-2">${p.name}</h3>
+    <p class="text-green-400">$${p.price}</p>
+    <button onclick="addToCart(${p.id})" class="bg-cyan-500 w-full mt-2">Add to Cart</button>
+  </div>`;
+ });
 }
+function paySuccess(){
+
+  let deliveryDate = new Date();
+  deliveryDate.setDate(deliveryDate.getDate()+3);
+
+  
+  saveOrder();
+
+  cartData=[];
+  localStorage.removeItem('cart');
+  renderCart();
+
+  document.getElementById('checkoutModal').classList.add('hidden');
+
+  
+  document.getElementById('successModal').classList.remove('hidden');
+
+  
+  console.log("Expected Delivery:", deliveryDate.toDateString());
+}
+function openOrderForm(){
+  if(cartData.length === 0){
+    alert("Cart is empty");
+    return;
+  }
+  document.getElementById('orderModal').classList.remove('hidden');
+}
+
+function confirmOrder(){
+  let name = document.getElementById('custName').value;
+  let address = document.getElementById('custAddress').value;
+  let phone = document.getElementById('custPhone').value;
+
+  if(!name || !address || !phone){
+    alert("Please fill all details");
+    return;
+  }
+
+  document.getElementById('orderModal').classList.add('hidden');
+
+  // open QR
+  checkout();
+}
+
+
+function closeSuccess(){
+  document.getElementById('successModal').classList.add('hidden');
+}
+
 </script>
 <footer class="bg-gray-900 text-white p-10 mt-10">
 <div class="grid md:grid-cols-3 gap-6">
